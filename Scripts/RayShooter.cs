@@ -6,6 +6,10 @@ using System.Collections.Generic;
 public class RayShooter : MonoBehaviour
 {
 
+    [SerializeField] AudioSource soundSource;
+    [SerializeField] AudioClip hitWallSound; //woosh hit sound effect
+    [SerializeField] AudioClip hitEnemySound; //slime hit sound effect
+
     private Camera cam;
     public int damage = 1;
 
@@ -63,11 +67,13 @@ public class RayShooter : MonoBehaviour
                     if (target != null)
                     {
                         target.ReactToHit();
+                        soundSource.PlayOneShot(hitEnemySound); //slime hit sound effect
 
                     }
                     else
                     {
                         StartCoroutine(SphereIndicator(hit.point));
+                        soundSource.PlayOneShot(hitWallSound); //woosh sound effect
                     }
                 }
                 
