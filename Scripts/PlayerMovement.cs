@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     public float timer = 3.0f;
     private CharacterController characterController;
 
-
+    private bool gamePaused;
 
     // all variables related to wallrunning
     private float horizontalInput;
@@ -40,7 +40,10 @@ public class PlayerMovement : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         walljump = false;
         timenotexceeded = true;
+        gamePaused = true;
         wallruntime = 0f;
+
+        gamePaused = true;
     }
 
     // changes speed by the modifier value of items
@@ -51,93 +54,113 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        //5 second timer before speed returns to normal
-        if(speed != baseSpeed + wallrunspeed)
+        // checks input for escape key and has two outcomes, based on if the game is paused
+        if (Input.GetKeyDown(KeyCode.Escape) && !gamePaused)
         {
-            if(timer < 0f)
-            {
-                speed = baseSpeed;
-                timer = 5f;
-            }
-            else
-            {
-                timer -= Time.deltaTime;
-            }
+            gamePaused = true;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            Time.timeScale = 0;
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape) && gamePaused)
+        {
+            gamePaused = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            Time.timeScale = 1;
         }
 
-        float deltaX = Input.GetAxis("Horizontal") * speed;
-        float deltaZ = Input.GetAxis("Vertical") * speed;
-
-        Vector3 movement = new Vector3(deltaX, 0, deltaZ);
-
-        movement = Vector3.ClampMagnitude(movement, speed);
-
-        // adds downward velocity over time
-        vertMovement += gravity * Time.deltaTime;
-
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input.GetAxisRaw("Vertical");
-        aboveGround = !Physics.Raycast(transform.position, Vector3.down, minJumpHeight, whatIsGround);
-
-        if ((wallLeft || wallRight) && verticalInput > 0 && aboveGround && !walljump && timenotexceeded)
+        // only updates movement and timers if the game is not paused
+        if (!gamePaused)
         {
-            vertMovement = 0 + gravity * Time.deltaTime;
-            wallrunspeed = 1f;
-            wallruntime += Time.deltaTime;
-            if(wallruntime > 4f)
+            //5 second timer before speed returns to normal
+            if (speed != (baseSpeed + wallrunspeed))
             {
-                timenotexceeded = false;
-                waittime = 1f;
-            }
-            
-            if (Input.GetKeyDown("space"))
-            {
-                vertMovement = jumpSpeed;
-                walljump = true;
-                walljumptimer = 1f;
-            }
-        }
-        else
-        {
-            
-            wallrunspeed = 0f;
-            if (walljump)
-            {
-                if(walljumptimer > 0f)
+                if (timer < 0f)
                 {
-                    walljumptimer -= Time.deltaTime;
+                    speed = baseSpeed;
+                    timer = 5f;
                 }
                 else
                 {
-                    walljump = false;
+                    timer -= Time.deltaTime;
                 }
             }
-            if(waittime > 0f)
+
+            float deltaX = Input.GetAxis("Horizontal") * speed;
+            float deltaZ = Input.GetAxis("Vertical") * speed;
+
+            Vector3 movement = new Vector3(deltaX, 0, deltaZ);
+
+            movement = Vector3.ClampMagnitude(movement, speed);
+
+            // adds downward velocity over time
+            vertMovement += gravity * Time.deltaTime;
+
+            horizontalInput = Input.GetAxisRaw("Horizontal");
+            verticalInput = Input.GetAxisRaw("Vertical");
+            aboveGround = !Physics.Raycast(transform.position, Vector3.down, minJumpHeight, whatIsGround);
+
+            if ((wallLeft || wallRight) && verticalInput > 0 && aboveGround && !walljump && timenotexceeded)
             {
-                waittime -= Time.deltaTime;
+                vertMovement = 0 + gravity * Time.deltaTime;
+                wallrunspeed = 1f;
+                wallruntime += Time.deltaTime;
+                if (wallruntime > 4f)
+                {
+                    timenotexceeded = false;
+                    waittime = 1f;
+                }
+
+                if (Input.GetKeyDown("space"))
+                {
+                    vertMovement = jumpSpeed;
+                    walljump = true;
+                    walljumptimer = 1f;
+                }
             }
             else
             {
-                timenotexceeded = true;
-                wallruntime = 0f;
+
+                wallrunspeed = 0f;
+                if (walljump)
+                {
+                    if (walljumptimer > 0f)
+                    {
+                        walljumptimer -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        walljump = false;
+                    }
+                }
+                if (waittime > 0f)
+                {
+                    waittime -= Time.deltaTime;
+                }
+                else
+                {
+                    timenotexceeded = true;
+                    wallruntime = 0f;
+                }
             }
-        }
-        
 
-        wallRight = Physics.Raycast(transform.position, transform.right, out wallRightHit, wallCheckDistance);
-        wallLeft = Physics.Raycast(transform.position, -transform.right, out wallLeftHit, wallCheckDistance);
 
-        if (Input.GetKeyDown("space") && characterController.isGrounded)
+            wallRight = Physics.Raycast(transform.position, transform.right, out wallRightHit, wallCheckDistance);
+            wallLeft = Physics.Raycast(transform.position, -transform.right, out wallLeftHit, wallCheckDistance);
+
+            if (Input.GetKeyDown("space") && characterController.isGrounded)
             {
                 vertMovement = jumpSpeed;
             }
 
-        movement.y = vertMovement;
+            movement.y = vertMovement;
 
-        movement *= Time.deltaTime;
+            movement *= Time.deltaTime;
 
-        movement = transform.TransformDirection(movement);
+            movement = transform.TransformDirection(movement);
 
-        characterController.Move(movement);
+            characterController.Move(movement);
+        }
     }
 }

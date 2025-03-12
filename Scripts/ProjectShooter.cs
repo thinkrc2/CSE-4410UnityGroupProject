@@ -20,12 +20,16 @@ public class ProjectShooter : MonoBehaviour
     private float cooldown = 0;
 
     private int clear;
+    private bool gamePaused;
 
     void Start()
     {
         cam = GetComponent<Camera>();
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+
+        //pauses game and unlocks cursor
+        gamePaused = true;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
 
         inventory = GetComponentInParent<InventoryScript>();
     }
@@ -58,7 +62,23 @@ public class ProjectShooter : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        // detection for escape key. also pauses the game by time scale
+        if (Input.GetKeyDown(KeyCode.Escape) && !gamePaused)
+        {
+            gamePaused = true;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            Time.timeScale = 0;
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape) && gamePaused)
+        {
+            gamePaused = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            Time.timeScale = 1;
+        }
+        // blocks input if the game is paused
+        if (Input.GetMouseButtonDown(0) && !gamePaused)
         {
 
             if (ammo > 0)
