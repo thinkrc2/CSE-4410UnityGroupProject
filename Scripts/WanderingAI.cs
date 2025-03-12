@@ -36,7 +36,7 @@ public class WanderingAI : MonoBehaviour
         isAlive = true;
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
         // move
@@ -70,7 +70,7 @@ public class WanderingAI : MonoBehaviour
             }
         }
     }
-    // public method to set isAlive
+   
     public void SetAlive(bool alive)
     {
         isAlive = alive;
