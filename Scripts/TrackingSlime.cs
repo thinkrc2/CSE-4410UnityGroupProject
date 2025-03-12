@@ -9,6 +9,9 @@ public class TrackingSlime : MonoBehaviour
     public float modifier = 0.8f;
     GameObject hitObject;
 
+    [SerializeField] AudioClip collision;
+
+
     // All instances of Wandering AI can be replaced with the component that is attached to the AI
     void Update()
     {
@@ -22,7 +25,7 @@ public class TrackingSlime : MonoBehaviour
         if (Physics.SphereCast(ray, 4f, out hit))
         {
             hitObject = hit.transform.gameObject;
-            if (hitObject.GetComponent<WanderingAI>() || hitObject.GetComponent<PlayerMovement>())
+            if (hitObject.GetComponent<WanderingAIJ>() || hitObject.GetComponent<PlayerMovement>())
             {
                 transform.LookAt(hitObject.transform);
                 transform.position += (hitObject.transform.position - transform.position).normalized * speed * Time.deltaTime;
@@ -33,12 +36,17 @@ public class TrackingSlime : MonoBehaviour
     public void OnTriggerEnter(Collider other)
     {
         PlayerMovement movement = other.GetComponent<PlayerMovement>();
-        WanderingAI enemy = other.GetComponent<WanderingAI>();
+        WanderingAIJ enemy = other.GetComponent<WanderingAIJ>();
 
         if (movement != null)
         {
             movement.modifySpeed(modifier);
         }
+
+        // Creates audio source at object's position, then destroys it when clip ends
+        // otherwise the clip ends when the object is destroyed
+        AudioSource.PlayClipAtPoint(collision, transform.position);
+
         Destroy(this.gameObject);
     }
 }

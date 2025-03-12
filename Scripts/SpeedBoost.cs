@@ -10,6 +10,8 @@ public class SpeedBoost : MonoBehaviour
     private float modifier = 1.4f;
     private float moveTimer = 2f;
 
+    [SerializeField] AudioClip collision;
+
 
     void Update()
     {
@@ -43,6 +45,10 @@ public class SpeedBoost : MonoBehaviour
         {
             movement.modifySpeed(modifier);
         }
+
+        // Creates audio source at object's position, then destroys it when clip ends
+        // otherwise the clip ends when the object is destroyed
+        AudioSource.PlayClipAtPoint(collision, transform.position);
 
         Destroy(this.gameObject);
     }

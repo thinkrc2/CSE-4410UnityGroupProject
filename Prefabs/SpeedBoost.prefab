@@ -121,6 +121,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d8f941d2d005cc4eb998c2c0e3f23c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 9
-  moveTimer: 2
-  present: 0
+  collision: {fileID: 8300000, guid: 3cabd9d3533523f46a516a9836054257, type: 3}
