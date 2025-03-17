@@ -8,6 +8,9 @@ public class AI : MonoBehaviour
     public float speed = 50f;
     public float rotationSpeed = 200f;
     int index = 0;
+    public float initialXOffset = 0f;
+    public float initialZOffset = 0f;
+
 
     // Update is called once per frame
     private void Update()
@@ -29,13 +32,16 @@ public class AI : MonoBehaviour
             eulerRotation.x = 0;
             eulerRotation.z = 0;
             Quaternion newRotation = Quaternion.Euler(eulerRotation);
-            transform.rotation = Quaternion.RotateTowards(newRotation, transform.rotation, rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, newRotation, rotationSpeed * Time.deltaTime);
+
+            transform.rotation = transform.rotation * Quaternion.Euler(initialXOffset, 0, initialZOffset);
         }
+    
+        
 
+	// end of additional code 
 
-        // end of additional code 
-
-        // Makes sure AI moves
+	   // Makes sure AI moves
         if (distance <= 0.05)
         {
             index++;
