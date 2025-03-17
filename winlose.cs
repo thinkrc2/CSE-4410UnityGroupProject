@@ -1,10 +1,33 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
+
+
+public class FinishLineTrigger : MonoBehaviour
+{
+    public WinLoseConditions winLoseConditions;
+    public bool isAI = false;
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            winLoseConditions.IncrementPlayerLaps();
+        }
+        else if (other.CompareTag("AI") && isAI)
+        {
+            winLoseConditions.IncrementAILaps();
+        }
+    }
+}
 
 public class WinLoseConditions : MonoBehaviour
 {
+    public GameObject losePanel;
+    public GameObject winPanel;
     public GameObject finishLine;
     public GameObject player;
     public GameObject AI; 
@@ -92,4 +115,14 @@ public class WinLoseConditions : MonoBehaviour
             loseScreen.SetActive(true);
             loseSound.Play();
         }
+
+        public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void GoToHomepage()
+    {
+        SceneManager.LoadScene("Homepage");
+    }
 }
