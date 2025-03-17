@@ -9,6 +9,9 @@ public class TrackingSlime : MonoBehaviour
     public float modifier = 0.8f;
     GameObject hitObject;
 
+    [SerializeField] AudioClip collision;
+
+
     // All instances of Wandering AI can be replaced with the component that is attached to the AI
     void Update()
     {
@@ -39,6 +42,11 @@ public class TrackingSlime : MonoBehaviour
         {
             movement.modifySpeed(modifier);
         }
+
+        // Creates audio source at object's position, then destroys it when clip ends
+        // otherwise the clip ends when the object is destroyed
+        AudioSource.PlayClipAtPoint(collision, transform.position);
+
         Destroy(this.gameObject);
     }
 }

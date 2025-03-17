@@ -8,6 +8,9 @@ public class SlimeBall : MonoBehaviour
     // modifier reduces player movement speed to a percentage of the original
     private float modifier = 0.6f;
 
+
+    [SerializeField] AudioClip collision;
+
     void Update()
     {
         transform.Translate(0, 0, speed * Time.deltaTime);
@@ -21,6 +24,10 @@ public class SlimeBall : MonoBehaviour
         {
             movement.modifySpeed(modifier);
         }
+
+        // Creates audio source at object's position, then destroys it when clip ends
+        // otherwise the clip ends when the object is destroyed
+        AudioSource.PlayClipAtPoint(collision, transform.position);
 
         Destroy(this.gameObject);
     }
