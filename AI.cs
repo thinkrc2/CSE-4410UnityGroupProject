@@ -11,7 +11,12 @@ public class AI : MonoBehaviour
     public float initialXOffset = 0f;
     public float initialZOffset = 0f;
 
-
+    private float speedTimer;
+    public void modifySpeed(float speedModifier)
+    {
+        speed *= speedModifier;
+        speedTimer = 3f;
+    }
     // Update is called once per frame
     private void Update()
     {
@@ -47,5 +52,16 @@ public class AI : MonoBehaviour
             index++;
         }
 
+        if(speed < 50f)
+        {
+            if(speedTimer > 0f)
+            {
+                speedTimer -= Time.deltaTime;
+            }
+            else
+            {
+                speed = 50f;
+            }
+        }
     }
 }

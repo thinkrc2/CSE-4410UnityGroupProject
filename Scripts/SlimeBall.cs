@@ -19,10 +19,15 @@ public class SlimeBall : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         PlayerMovement movement = other.GetComponent<PlayerMovement>();
+        AI ai = other.GetComponent<AI>();
 
         if (movement != null)
         {
             movement.modifySpeed(modifier);
+        }
+        else if(ai != null)
+        {
+            ai.modifySpeed(modifier);
         }
 
         // Creates audio source at object's position, then destroys it when clip ends
