@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class PlayerMovement : MonoBehaviour
 {
     public float baseSpeed = 12f;
-    public float speed = 12f;
+    public float speed;
     public float gravity = -9.8f;
 
     public float jumpSpeed = 4.9f;
@@ -34,6 +34,9 @@ public class PlayerMovement : MonoBehaviour
     private bool timenotexceeded;
     private float wallruntime;
     private float waittime;
+    private float totalModifier;
+    private bool isBaseSpeed;
+    private float oilModifier;
 
     void Start()
     {
@@ -41,30 +44,52 @@ public class PlayerMovement : MonoBehaviour
         walljump = false;
         timenotexceeded = true;
         wallruntime = 0f;
+        totalModifier = 1f;
     }
 
     // changes speed by the modifier value of items
     public void modifySpeed(float modifier)
     {
+        speed -= wallrunspeed;
         speed *= modifier;
-    } 
+        speed += wallrunspeed;
+        timer = 3f;
+        totalModifier *= modifier;
+        isBaseSpeed = false;
+    }
 
+    public void undoSpeedModifier()
+    {
+        speed -= wallrunspeed;
+        speed = speed / totalModifier;
+        speed += wallrunspeed;
+        totalModifier = 1f;
+        isBaseSpeed = true;
+    }
+
+    public void applyOilSlick(float modifier)
+    {
+        speed *= modifier;
+        oilModifier = modifier;
+    }
+
+    public void removeOilSlick()
+    {
+        speed /= oilModifier;
+    }
     void Update()
     {
         //5 second timer before speed returns to normal
-        if(speed != baseSpeed + wallrunspeed)
+        if(timer > 0f)
         {
-            if(timer < 0f)
-            {
-                speed = baseSpeed;
-                timer = 5f;
-            }
-            else
-            {
-                timer -= Time.deltaTime;
-            }
+            timer -= Time.deltaTime;
+        }
+        else if(timer < 0f && isBaseSpeed == false)
+        {
+            undoSpeedModifier();
         }
 
+        speed = baseSpeed + wallrunspeed;
         float deltaX = Input.GetAxis("Horizontal") * speed;
         float deltaZ = Input.GetAxis("Vertical") * speed;
 
