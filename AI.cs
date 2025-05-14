@@ -11,12 +11,38 @@ public class AI : MonoBehaviour
     public float initialXOffset = 0f;
     public float initialZOffset = 0f;
 
-    private float speedTimer;
+    private float oilModifier;
+    private float Timer;
+    private float totalModifier = 1f;
+    private bool isNormalSpeed;
     public void modifySpeed(float speedModifier)
     {
         speed *= speedModifier;
-        speedTimer = 3f;
+        totalModifier *= speedModifier;
+        Timer = 5f;
+        isNormalSpeed = false;
     }
+
+    public void undoSpeedModifier()
+    {
+        speed = speed / totalModifier;
+        totalModifier = 1f;
+        isNormalSpeed = true;
+    }
+    // Added these functions for using oil slicks********
+    public void applyOilSlick(float modifier)
+    {
+        speed *= modifier;
+        oilModifier = modifier;
+    }
+
+    public void removeOilSlick()
+    {
+        speed /= oilModifier;
+    }
+    //***************************************************
+
+
     // Update is called once per frame
     private void Update()
     {
@@ -52,16 +78,12 @@ public class AI : MonoBehaviour
             index++;
         }
 
-        if(speed < 50f)
+        if(Timer > 0)
         {
-            if(speedTimer > 0f)
-            {
-                speedTimer -= Time.deltaTime;
-            }
-            else
-            {
-                speed = 50f;
-            }
+            Timer -= Time.deltaTime;
+        }else if (isNormalSpeed)
+        {
+            undoSpeedModifier();
         }
     }
 }
