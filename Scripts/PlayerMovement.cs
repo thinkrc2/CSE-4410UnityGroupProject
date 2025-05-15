@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class PlayerMovement : MonoBehaviour
 {
     public float baseSpeed = 12f;
-    public float speed;
+    public float speed = 12f;
     public float gravity = -9.8f;
 
     public float jumpSpeed = 4.9f;
@@ -89,7 +89,7 @@ public class PlayerMovement : MonoBehaviour
             undoSpeedModifier();
         }
 
-        speed = baseSpeed + wallrunspeed;
+        
         float deltaX = Input.GetAxis("Horizontal") * speed;
         float deltaZ = Input.GetAxis("Vertical") * speed;
 
